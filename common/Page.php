@@ -1,7 +1,6 @@
 <?php
-
 namespace common;
-
+require_once "DbHelper.php";
 abstract class Page
 {
     public function show(): void{
@@ -16,7 +15,7 @@ abstract class Page
         <head>
             <link rel="stylesheet" type="text/css" href="/css/main.css">
             <meta charset="utf-8"/>
-            <title><?php $this->getTitle()?></title>
+            <title><?php print($this->getTitle());?></title>
         </head>
         <?php
     }
@@ -41,7 +40,7 @@ abstract class Page
     {
         ?>
         <div class='header'>
-            <?php $this->getTitle() ?>
+            <?php print ($this->getTitle()); ?>
         </div>
         <?php
     }
@@ -49,7 +48,12 @@ abstract class Page
     private function showMenu()
     {
         print "<div class='menu'>";
-        print "Здесь будет меню";
+        $dbh = new DbHelper("localhost", 3306, "root", "");
+        $pages_info = $dbh->getPagesInfo();
+        foreach ($pages_info as $index => $page_info){
+            if ($page_info['alias']) continue;
+            print "<div class='menuitem'><a href='{$page_info['url']}'>{$page_info['title']}</a></div>";
+        }
         print "</div>";
     }
 
@@ -58,8 +62,13 @@ abstract class Page
         print "<div class='footer'>© Сергей Маклецов, 2023</div>";
     }
 
-    private function getTitle()
+    private function getTitle(): string
     {
-        print "Название странички";
+        $dbh = new DbHelper("localhost", 3306, "root", "");
+        return $dbh->getTitle($this->getUrl());
+    }
+
+    private function getUrl(): string {
+        return $_SERVER['SCRIPT_NAME'];
     }
 }
