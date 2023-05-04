@@ -1,0 +1,41 @@
+body{
+    background-color: beige;
+    padding: 0;
+    margin: 0;
+}
+
+.main{
+    width: 1024px;
+    margin: 0 auto;
+    background-color: white;
+}
+
+.header{
+    float: left;
+    width: calc(100% - 40px);
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: x-large;
+    color: darkred;
+}
+
+.footer{
+    clear: both;
+    width: calc(100% - 40px);
+    font-size: small;
+    text-align: right;
+    padding: 20px;
+}
+
+.content{
+    float: left;
+    padding: 10px;
+}
+
+.menu{
+    float: left;
+    padding: 10px;
+    text-align: center;
+    width: 200px;
+}

@@ -24,10 +24,14 @@ abstract class Page
     private function createBody()
     {
         print "<body>";
+        print "<div class='main'>";
         $this->showHeader();
         $this->showMenu();
+        print "<div class='content'>";
         $this->showContent();
+        print "</div>";
         $this->showFooter();
+        print "</div>";
         print "</body>";
     }
 
@@ -44,12 +48,14 @@ abstract class Page
 
     private function showMenu()
     {
-        print "Здесь будет меню.";
+        print "<div class='menu'>";
+        print "Здесь будет меню";
+        print "</div>";
     }
 
     private function showFooter()
     {
-        print "Окончание страницы";
+        print "<div class='footer'>© Сергей Маклецов, 2023</div>";
     }
 
     private function getTitle()
