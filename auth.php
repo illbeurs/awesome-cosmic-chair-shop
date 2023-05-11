@@ -17,7 +17,6 @@ class auth extends Page
         else {
             $this->auth = $this->auth();
             if ($this->auth){
-                print($_SESSION['requested_page']);
                 header("Location: {$_SESSION['requested_page']}");
             }
         }
