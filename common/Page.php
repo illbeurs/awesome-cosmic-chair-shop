@@ -3,6 +3,19 @@ namespace common;
 require_once "DbHelper.php";
 abstract class Page
 {
+
+    private $dbh;
+
+    public function __construct(){
+        session_start();
+        $this->dbh = DbHelper::getInstance("localhost", 3306, "root", "");
+        if ($this->dbh->isSecure($this->getUrl())){
+            if (!isset($_SESSION['login'])){
+                $_SESSION['requested_page'] = $_SERVER['REQUEST_URI'];
+                header("Location: /auth.php");
+            }
+        }
+    }
     public function show(): void{
         print "<html lang='ru'>";
         $this->createHeading();
@@ -48,27 +61,35 @@ abstract class Page
     private function showMenu()
     {
         print "<div class='menu'>";
-        $dbh = new DbHelper("localhost", 3306, "root", "");
-        $pages_info = $dbh->getPagesInfo();
+        $pages_info = $this->dbh->getPagesInfo();
         foreach ($pages_info as $index => $page_info){
-            if ($page_info['alias']) continue;
-            print "<div class='menuitem'><a href='{$page_info['url']}'>{$page_info['title']}</a></div>";
+            $curr_page = ($page_info['url'] === $this->getUrl()) || ($page_info['alias'] === $this->getUrl());
+            print "<div class='menuitem'>";
+            if (!$curr_page)
+                print "<a class='l_menuitem' href='{$page_info['url']}'>";
+            print $page_info['name'];
+            if (!$curr_page) print "</a>";
+            print "</div>";
         }
         print "</div>";
     }
 
     private function showFooter()
     {
-        print "<div class='footer'>© Сергей Маклецов, 2023</div>";
+        print "<div class='footer'>";
+        if (isset($_SESSION['login'])){
+            print "<a href='/auth.php?exit=1'>Выход</a>";
+        }
+        print "<div>© Сергей Маклецов, 2023</div>";
+        print "</div>";
     }
 
     private function getTitle(): string
     {
-        $dbh = new DbHelper("localhost", 3306, "root", "");
-        return $dbh->getTitle($this->getUrl());
+        return $this->dbh->getTitle($this->getUrl());
     }
 
     private function getUrl(): string {
-        return $_SERVER['SCRIPT_NAME'];
+        return mb_split("/?/", $_SERVER['REQUEST_URI'], 1)[0];
     }
 }

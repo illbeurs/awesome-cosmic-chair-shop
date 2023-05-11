@@ -46,10 +46,38 @@ body{
     border: 1px dotted rosybrown;
 }
 
+a.l_menuitem{
+    color: white;
+    text-decoration: none;
+    font-weight: normal;
+}
+
 .menuitem{
     width: calc(100% - 20px);
     margin: 5px auto;
     padding: 10px;
     background-color: chocolate;
     color: white;
+    font-weight: bold;
+}
+
+.auth{
+    border: 1px solid chocolate;
+    margin: auto;
+}
+
+.tdhead{
+    border: 1px dotted chocolate;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error{
+    font-weight: bold;
+    color: red;
+    text-align: center;
+    padding: 10px;
+    width: calc(100% - 40px);
+    margin: 10px;
+    background-color: moccasin;
 }
