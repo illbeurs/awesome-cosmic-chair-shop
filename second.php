@@ -15,13 +15,38 @@ class graph
 
     public function findPath($start,$finish){
         $this->vtx[$start-1]->setPathLength(0);
-
-    }
-    private function findMinVertex(){
-        $min=PHP_INT_MAX;
-        foreach ($this->vtx as $i=>$v){
-
+        while(($v = $this->findMinVertex()) !== null){
+            $edges = $v->getEdges();
+            foreach ($edges as $i=>$edge){
+                if($edge > 0){
+                    $ln = $v->getPathLength() + $edge;
+                    if($ln < $this->vtx[$i]->getPathLength()) {
+                        $this->vtx[$i]->setPathLength($ln);
+                        $this->vtx[$i]->setPrevVertex($v->getNumber() - 1);
+                    }
+                }
+            }
+            $v->setIsVisited(true);
         }
+
+        $res = array();
+        $curr = $finish - 1;
+        while($curr !== $start - 1){
+            $res[] = $this->vtx[$curr];
+            if ($this->vtx[$curr]->getPrevVertex() >= 0) {
+                $curr = $this->vtx[$curr]->getPrevVertex();
+            } else break;
+        }
+        $res[] = $this->vtx[$start - 1];
+        return array_reverse($res);
+    }
+    private function findMinVertex(): ?vertex{
+        $min=null;
+        foreach ($this->vtx as $i=>$v){
+            if(($min === null || $min->getPathLength() > $v->getPathLength()) && !$v->isVisited())
+                $min = $v;
+        }
+        return $min;
     }
 
 }
@@ -31,16 +56,15 @@ class vertex
 
     private int $number;
     private array $edges=array();
-    private bool $isVisited=false;
+    private bool $isVisited = false;
     private int $pathLength=PHP_INT_MAX;
     private int $prevVertex=-1;
 
     public function __construct($num,$edges){
         $this->number=$num;
         foreach ($edges as $i=>$e){
-            $edges[$i]=(int)$e;
+            $this->edges[$i]=(int)$e;
         }
-
     }
 
     /**
@@ -90,6 +114,22 @@ class vertex
     {
         $this->prevVertex = $prevVertex;
     }
+
+    /**
+     * @return array
+     */
+    public function getEdges(): array
+    {
+        return $this->edges;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumber(): int
+    {
+        return $this->number;
+    }
 }
 
 class second extends Page
@@ -97,7 +137,12 @@ class second extends Page
 
     protected function showContent()
     {
-        print "<b>ОСНОВНОЙ КОНТЕНТ ВТОРОЙ СТРАНИЦЫ</b>";
+        $g = new graph("data/graph.txt");
+        $path = $g->findPath(3, 2);
+        foreach ($path as $v){
+            print $v->getNumber()." ";
+        }
+        print("Длина пути: ".$path[sizeof($path)-1]->getPathLength());
     }
 }
 
