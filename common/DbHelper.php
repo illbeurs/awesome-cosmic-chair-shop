@@ -2,6 +2,7 @@
 
 namespace common;
 
+use Exception;
 use mysqli;
 
 class DbHelper
@@ -75,5 +76,34 @@ class DbHelper
         $stmt->close();
         $this->conn->commit();
         return $row !== null && $row['secure'] == 1;
+    }
+
+    public function getUserName(string $user){
+        $sql = "SELECT `name` FROM users WHERE login = ?";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $user);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        $this->conn->commit();
+        return ($row === null) ? $row : $row['name'];
+    }
+
+    public function saveUser(string $login, string $password, string $name): bool
+    {
+        $sql = "INSERT INTO `users` (login, password, name) VALUES(?, ?, ?)";
+        try {
+            $this->conn->begin_transaction();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("sss", $login, $password, $name);
+            if (!$stmt->execute()) throw new Exception("Ошибка добавления пользователя");
+            $this->conn->commit();
+            return true;
+        } catch (\Throwable $ex){
+            $this->conn->rollback();
+            return false;
+        }
     }
 }

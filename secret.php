@@ -2,13 +2,16 @@
 
 require_once "common/Page.php";
 use common\Page;
+use common\DbHelper;
 class secret extends Page
 {
 
 
     protected function showContent()
     {
-        print "<b>Секретная страница сайта</b>";
+        $name = DbHelper::getInstance()->getUserName($_SESSION['login']);
+        print "<div>Приветствуем, ".$name."</div>";
+        print "<div>Личный кабинет...</div>";
     }
 }
 

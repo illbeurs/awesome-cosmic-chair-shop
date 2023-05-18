@@ -11,8 +11,8 @@ class graph
         foreach ($graphData as $num=>$value){
             $this->vtx[$num]=new vertex($num+1,explode( ' ',$value));
         }
-
     }
+
     public function findPath($start,$finish){
         $this->vtx[$start-1]->setPathLength(0);
 

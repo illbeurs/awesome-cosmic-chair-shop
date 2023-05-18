@@ -41,6 +41,7 @@ class auth extends Page
                     <td><input type="password" size="30" maxlength="50" name="password" placeholder="Пароль"> </td>
                 </tr>
                 <tr><td colspan="2" class="tdhead"><input type="submit" value="Войти"></td></tr>
+                <tr><td colspan="2" class="tdhead"><a href="reg.php">Еще не зарегистрированы?</a></td></tr>
             </table>
         </form>
         <?php
@@ -53,7 +54,7 @@ class auth extends Page
         $login = $_POST['login'];
         $password = $_POST['password'];
         $save_pwd = DbHelper::getInstance()->getUserPassword($login) ?? "";
-        $auth = strcmp($password, $save_pwd) === 0;
+        $auth = password_verify($password, $save_pwd);
         if ($auth) $_SESSION['login'] = $login;
         else unset($_SESSION['login']);
         return $auth;
