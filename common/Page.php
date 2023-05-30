@@ -80,7 +80,7 @@ abstract class Page
         if (isset($_SESSION['login'])){
             print "<a href='/auth.php?exit=1'>Выход</a>";
         }
-        print "<div>© Сергей Маклецов, 2023</div>";
+        print "<div> DMA 2023</div>";
         print "</div>";
     }
 

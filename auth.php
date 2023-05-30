@@ -12,7 +12,7 @@ class auth extends Page
         parent::__construct();
         if (isset($_REQUEST['exit'])){
             unset($_SESSION['login']);
-            header("Location: /index.php");
+            //header("Location: /index.php");
         }
         else {
             $this->auth = $this->auth();

@@ -51,19 +51,19 @@ class reg extends Page
                 </tr>
                 <tr>
                     <td>Логин:</td>
-                    <td><input type="text" size="30" maxlength="50" name="login" value="<?php print($_POST['login']);?>" placeholder="Ваш уникальный идентификатор"></td>
+                    <td><input type="text" size="30" maxlength="50" name="login" value="<?php if (isset($_POST['login'])) print($_POST['login']); else "";?>" placeholder="Ваш уникальный идентификатор"></td>
                 </tr>
                 <tr>
                     <td>Пароль:</td>
-                    <td><input type="password" size="30" maxlength="50" name="password" value="<?php print($_POST['password']);?>" placeholder="Пароль"> </td>
+                    <td><input type="password" size="30" maxlength="50" name="password" placeholder="Пароль"> </td>
                 </tr>
                 <tr>
                     <td>Повтор пароля:</td>
-                    <td><input type="password" size="30" maxlength="50" name="password2"  value="<?php print($_POST['password2']);?>"placeholder="Повтор пароля"> </td>
+                    <td><input type="password" size="30" maxlength="50" name="password2" placeholder="Повтор пароля"> </td>
                 </tr>
                 <tr>
                     <td>Как Вас зовут:</td>
-                    <td><input type="text" size="30" maxlength="100" name="name" value="<?php print($_POST['name']);?>" placeholder="Ваши фамилия и имя"> </td>
+                    <td><input type="text" size="30" maxlength="100" name="name" value="<?php if (isset($_POST['name'])) print($_POST['name']); else "";?>" placeholder="Ваши фамилия и имя"> </td>
                 </tr>
                 <tr><td colspan="2" class="tdhead"><input type="submit" value="Зарегистрироваться"></td></tr>
                 <tr><td colspan="2" class="tdhead"><a href="auth.php">Уже зарегистрированы?</a></td></tr>

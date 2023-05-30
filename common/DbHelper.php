@@ -106,4 +106,110 @@ class DbHelper
             return false;
         }
     }
+    public function getProductInfo(int $prodId, string $colname)
+    {
+        $sql = "SELECT $colname FROM products WHERE id = ?";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $prodId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        $this->conn->commit();
+        return ($row[$colname]);
+    }
+    public function updateProduct(int $prodId, int $amount) : void
+    {
+        $sql = "UPDATE `products` SET `amount`= ?  WHERE id = ?";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $amount, $prodId);
+        $stmt->execute();
+        $stmt->close();
+        $this->conn->commit();
+    }
+    public function updateCart(string $login, string $prodname)
+    { 
+        $sql = "SELECT COUNT(*) FROM `cart` WHERE login ='$login' and prod_name = '$prodname'";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        $this->conn->commit();
+        $count = intval($row['COUNT(*)']);
+        if (!$count){
+            $sql = "INSERT INTO `cart` (login, prod_name, count) VALUES ('$login', '$prodname', '1')";
+            $this->conn->begin_transaction();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $stmt->close();
+            $this->conn->commit();
+        }
+        else {
+        $sql = "UPDATE `cart` SET `count` = count + 1
+        WHERE login ='$login' and prod_name = '$prodname' ";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $stmt->close();
+        $this->conn->commit();
+        }
+    }
+    public function selectCart(string $login)
+    {
+        $sql = "SELECT c.prod_name, c.count, p.price * c.count FROM cart c JOIN products p on c.prod_name = p.name WHERE c.login ='$login'";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_all();
+        $stmt->close();
+        $this->conn->commit();
+        return $row;
+    }
+    public function delProdFromCart(string $login, string $prod_name)
+    {
+        $sql = "DELETE FROM `cart` WHERE login = ? and prod_name = ?";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $login, $prod_name);
+        $stmt->execute();
+        $stmt->close();
+        $this->conn->commit();
+    }
+    public function buyProd(string $login, string $prod_name, int $count) : bool
+    {
+        if ($count > $this->getProductInfo(($prod_name == "Млечный стул") ? 1:2, 'amount'))
+        {
+            return false;
+        }
+        else{
+        $this->delProdFromCart($login, $prod_name); 
+        $sql = "UPDATE `products` SET `amount` = `amount` - $count
+        WHERE name = '$prod_name'";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $stmt->close();
+        $this->conn->commit();
+        return true;
+        }
+    }
+    public function getCartAmount(string $login, string $prod_name): int
+    {
+        $sql = "SELECT `count` FROM cart WHERE login ='$login' and prod_name = '$prod_name' ";
+        $this->conn->begin_transaction();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        $this->conn->commit();
+        return ($row === null) ? 0 : intval($row['count']);
+    }
+
+
 }
